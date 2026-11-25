@@ -304,6 +304,11 @@ describe("App", () => {
 
     vi.mocked(useLocationData).mockReturnValue({ locations, loading: false, error: "" });
     rerender(<App />);
-    await waitFor(() => expect(screen.getByRole("main")).toBeTruthy());
+    expect(await screen.findByRole("heading", { name: "Food Access Points" })).toBeTruthy();
+
+    rerender(<App includeTitle={false} />);
+    await waitFor(() =>
+      expect(screen.queryByRole("heading", { name: "Food Access Points" })).toBeNull(),
+    );
   });
 });

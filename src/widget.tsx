@@ -68,7 +68,12 @@ class FoodAccessMapElement extends HTMLElement {
 
     this.reactRoot.render(
       <StrictMode>
-        <App locationsUrl={locationsUrl} syncUrl={false} includeStructuredData={false} />
+        <App
+          locationsUrl={locationsUrl}
+          syncUrl={false}
+          includeStructuredData={false}
+          includeTitle={false}
+        />
       </StrictMode>,
     );
   }
