@@ -1,0 +1,12 @@
+node_modules/
+dist/
+bundle-stats.html
+.sst/
+.cache/
+.geocode-cache.json
+tsconfig.tsbuildinfo
+source.kml.tmp
+coverage/
+playwright-report/
+test-results/
+*.log
