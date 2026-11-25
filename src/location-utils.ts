@@ -68,10 +68,6 @@ function includesWeekdayRange(value: string, dayIndex: number) {
 
 export function censusLookup(address: string): Promise<CensusLocation> {
   const callbackName = `census_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-  const callbackWindow = window as unknown as Record<
-    string,
-    ((result: CensusResponse) => void) | undefined
-  >;
   const script = document.createElement("script");
   const params = new URLSearchParams({
     address,
@@ -84,11 +80,11 @@ export function censusLookup(address: string): Promise<CensusLocation> {
     let timeout: number;
     const cleanup = () => {
       window.clearTimeout(timeout);
-      delete callbackWindow[callbackName];
+      Reflect.deleteProperty(window, callbackName);
       script.remove();
     };
 
-    callbackWindow[callbackName] = (result) => {
+    Reflect.set(window, callbackName, (result: CensusResponse) => {
       cleanup();
       const match = result.result?.addressMatches?.[0];
       const longitude = Number(match?.coordinates?.x);
@@ -102,7 +98,7 @@ export function censusLookup(address: string): Promise<CensusLocation> {
         return;
       }
       resolve({ latitude, longitude, label: match.matchedAddress ?? address });
-    };
+    });
     script.addEventListener(
       "error",
       () => {

@@ -3,22 +3,33 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { useLocationData } from "../../src/hooks/useLocationData";
 import { locations } from "./fixtures";
 
+const publishedLocations = locations.map((location) => ({
+  ...location,
+  weeks_open: "Every week",
+  coordinate_source: "map point",
+  coordinate_precision: "point",
+  census: null,
+}));
+
 describe("useLocationData", () => {
   afterEach(() => vi.unstubAllGlobals());
 
-  it("loads valid locations and drops records with invalid coordinates", async () => {
+  it("rejects the dataset when a location has invalid coordinates", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
         ok: true,
-        json: async () => [locations[0], { ...locations[1], latitude: Number.NaN }],
+        json: async () => [
+          publishedLocations[0],
+          { ...publishedLocations[1], latitude: Number.NaN },
+        ],
       }),
     );
     const { result } = renderHook(() => useLocationData());
 
     await waitFor(() => expect(result.current.loading).toBe(false));
-    expect(result.current.locations).toEqual([locations[0]]);
-    expect(result.current.error).toBe("");
+    expect(result.current.locations).toEqual([]);
+    expect(result.current.error).not.toBe("");
     expect(fetch).toHaveBeenCalledWith(
       "/locations.json",
       expect.objectContaining({ signal: expect.any(AbortSignal) }),
@@ -28,7 +39,7 @@ describe("useLocationData", () => {
   it("loads from a configured data URL", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn().mockResolvedValue({ ok: true, json: async () => [locations[0]] }),
+      vi.fn().mockResolvedValue({ ok: true, json: async () => [publishedLocations[0]] }),
     );
     const dataUrl = "https://finder.example/locations.json";
     const { result } = renderHook(() => useLocationData(dataUrl));
@@ -38,7 +49,7 @@ describe("useLocationData", () => {
       dataUrl,
       expect.objectContaining({ signal: expect.any(AbortSignal) }),
     );
-    expect(result.current.locations).toEqual([locations[0]]);
+    expect(result.current.locations).toEqual([publishedLocations[0]]);
   });
 
   it("exposes a failed response as an error", async () => {

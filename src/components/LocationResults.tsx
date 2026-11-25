@@ -55,7 +55,11 @@ export function LocationResults({
   const nameSearch = useMemo(
     () => ({
       haystack: sourceLocations.map(({ name }) => name),
-      searcher: new uFuzzy({ intraMode: 1 }),
+      searcher: new uFuzzy({
+        // uFuzzy declares this as an ambient const enum, which cannot be accessed with isolatedModules.
+        // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- 1 is its documented SingleError member.
+        intraMode: 1,
+      }),
     }),
     [sourceLocations],
   );

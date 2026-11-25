@@ -1,4 +1,7 @@
-export type LocationType = "Pantry" | "Pop-up" | "Shelter" | "Soup kitchen" | "Other";
+import type { z } from "zod";
+import type { locationTypeSchema, sourceLocationSchema } from "./location-schema.mjs";
+
+export type LocationType = z.infer<typeof locationTypeSchema>;
 export type SearchMode = "address" | "name";
 export type Day =
   | "Monday"
@@ -21,18 +24,7 @@ export type LocationCriteria = {
   };
 };
 
-export type SourceLocation = {
-  name: string;
-  type: LocationType;
-  address: string;
-  city: string;
-  state: string;
-  zip: string;
-  days_open: string;
-  times_open: string;
-  latitude: number;
-  longitude: number;
-};
+export type SourceLocation = z.infer<typeof sourceLocationSchema>;
 
 export type Location = SourceLocation & { distance?: number; key: string };
 
