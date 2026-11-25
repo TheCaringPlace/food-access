@@ -7,15 +7,17 @@ import type { SourceLocation } from "../types";
 export function LocationFinder({
   locations,
   syncUrl = true,
+  includeTitle = true,
 }: {
   locations: SourceLocation[];
   syncUrl?: boolean;
+  includeTitle?: boolean;
 }) {
   const finder = useLocationCriteria(locations, syncUrl);
 
   return (
     <main className="mx-auto flex max-w-7xl flex-col gap-4 p-4 text-slate-900 md:gap-6 md:p-6">
-      <h1 className="text-2xl font-bold tracking-tight">Food Access Points</h1>
+      {includeTitle && <h1 className="text-2xl font-bold tracking-tight">Food Access Points</h1>}
       <SearchForm
         search={{
           text: finder.searchText,

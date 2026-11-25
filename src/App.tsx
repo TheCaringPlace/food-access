@@ -8,10 +8,12 @@ function App({
   locationsUrl = "/locations.json",
   syncUrl = true,
   includeStructuredData = true,
+  includeTitle = true,
 }: {
   locationsUrl?: string;
   syncUrl?: boolean;
   includeStructuredData?: boolean;
+  includeTitle?: boolean;
 } = {}) {
   const { locations, loading, error } = useLocationData(locationsUrl);
 
@@ -78,7 +80,7 @@ function App({
         </main>
       }
     >
-      <LocationFinder locations={locations} syncUrl={syncUrl} />
+      <LocationFinder locations={locations} syncUrl={syncUrl} includeTitle={includeTitle} />
     </Suspense>
   );
 }
