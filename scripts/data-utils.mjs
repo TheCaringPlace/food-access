@@ -2,6 +2,7 @@ import { readFile, rename, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { XMLParser } from "fast-xml-parser";
+import { kmlLocationSchema } from "../src/location-schema.mjs";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 export const kmlPath = path.join(root, "..", "source.kml");
@@ -118,21 +119,27 @@ export async function readLocations() {
       // The export contains one entirely empty placeholder placemark, not a location.
       if (!name && !query && !rawPoint) return [];
 
-      return [
-        {
-          name,
-          type,
-          address,
-          city,
-          state,
-          zip,
-          weeks_open: extendedData["Weeks Open"] ?? "",
-          days_open: extendedData["Days Open"] ?? "",
-          times_open: extendedData["Times Open"] ?? "",
-          query,
-          point: rawPoint ? [latitude, longitude] : null,
-        },
-      ];
+      const location = kmlLocationSchema.safeParse({
+        name,
+        type,
+        address,
+        city,
+        state,
+        zip,
+        weeks_open: extendedData["Weeks Open"] ?? "",
+        days_open: extendedData["Days Open"] ?? "",
+        times_open: extendedData["Times Open"] ?? "",
+        query,
+        point: rawPoint ? [latitude, longitude] : null,
+      });
+      if (!location.success) {
+        const issues = location.error.issues
+          .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+          .join("; ");
+        throw new Error(`Invalid KML location "${name || query || "unnamed"}": ${issues}`);
+      }
+
+      return [location.data];
     });
   });
 }

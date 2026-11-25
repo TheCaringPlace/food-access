@@ -5,6 +5,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { readLocations, locationKey } from "./data-utils.mjs";
+import { publishedLocationsSchema } from "../src/location-schema.mjs";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const csvPath = path.join(root, "..", "data", "food-access-points.csv");
@@ -89,16 +90,18 @@ async function main() {
     );
   }
 
+  const validatedRows = publishedLocationsSchema.parse(rows);
+
   const csv =
     [
       fields.join(","),
-      ...rows.map((row) => fields.map((field) => csvCell(row[field])).join(",")),
+      ...validatedRows.map((row) => fields.map((field) => csvCell(row[field])).join(",")),
     ].join("\n") + "\n";
   await mkdir(path.dirname(csvPath), { recursive: true });
   await mkdir(path.dirname(publicJsonPath), { recursive: true });
   await writeFile(csvPath, csv, "utf8");
-  await writeFile(publicJsonPath, `${JSON.stringify(rows, null, 2)}\n`, "utf8");
-  console.log(`Wrote ${rows.length} geolocated locations to ${csvPath}.`);
+  await writeFile(publicJsonPath, `${JSON.stringify(validatedRows, null, 2)}\n`, "utf8");
+  console.log(`Wrote ${validatedRows.length} geolocated locations to ${csvPath}.`);
   console.log(`Wrote static JSON to ${publicJsonPath}.`);
 }
 

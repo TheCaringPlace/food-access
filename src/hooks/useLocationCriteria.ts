@@ -69,7 +69,7 @@ export function useLocationCriteria(locations: SourceLocation[], syncUrl = true)
   }, [criteria, syncUrl]);
 
   useEffect(() => {
-    if (searchMode !== "address" || !searchQuery) return;
+    if (searchMode !== "address" || !searchQuery) return undefined;
 
     let cancelled = false;
     void censusLookup(searchQuery)

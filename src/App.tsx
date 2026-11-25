@@ -16,7 +16,7 @@ function App({
   const { locations, loading, error } = useLocationData(locationsUrl);
 
   useEffect(() => {
-    if (!includeStructuredData || loading || error) return;
+    if (!includeStructuredData || loading || error) return undefined;
 
     const script = document.createElement("script");
     script.type = "application/ld+json";

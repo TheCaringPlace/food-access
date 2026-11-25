@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { publishedLocationsSchema } from "../location-schema.mjs";
 import type { SourceLocation } from "../types";
 
 export function useLocationData(locationsUrl = "/locations.json") {
@@ -11,15 +12,9 @@ export function useLocationData(locationsUrl = "/locations.json") {
     fetch(locationsUrl, { signal: controller.signal })
       .then(async (response) => {
         if (!response.ok) throw new Error("Could not load the location data.");
-        return response.json() as Promise<SourceLocation[]>;
+        return publishedLocationsSchema.parse(await response.json());
       })
-      .then((data) =>
-        setLocations(
-          data.filter(
-            (location) => Number.isFinite(location.latitude) && Number.isFinite(location.longitude),
-          ),
-        ),
-      )
+      .then((data) => setLocations(data))
       .catch((cause: unknown) => {
         if (!(cause instanceof DOMException && cause.name === "AbortError")) {
           setError(cause instanceof Error ? cause.message : "Could not load locations.");

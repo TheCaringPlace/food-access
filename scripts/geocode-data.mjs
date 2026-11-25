@@ -77,7 +77,7 @@ async function geocode(place) {
     if (result) return result;
   } catch (error) {
     console.warn(
-      `Census lookup failed for ${place.query}: ${error instanceof Error ? error.message : error}`,
+      `Census lookup failed for ${place.query}: ${error instanceof Error ? error.message : String(error)}`,
     );
   }
   return zipCentroid(place);

@@ -42,7 +42,9 @@ export function FilterSidebar({ filters }: FilterSidebarProps) {
           <select
             className="w-full rounded border border-slate-300 bg-white px-2 py-1.5"
             value={selectedDay}
-            onChange={(event) => setSelectedDay(event.target.value as Day | "")}
+            onChange={(event) =>
+              setSelectedDay(DAYS.find((day) => day === event.target.value) ?? "")
+            }
           >
             <option value="">Any day</option>
             {DAYS.map((day) => (

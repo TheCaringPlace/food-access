@@ -22,7 +22,7 @@ export function SearchForm({ search }: SearchFormProps) {
         className="flex flex-col gap-2"
         onSubmit={(event) => {
           event.preventDefault();
-          submit(text);
+          void submit(text);
         }}
       >
         <fieldset className="flex items-center gap-4 text-sm" disabled={searching}>

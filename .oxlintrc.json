@@ -1,15 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": [
-    "typescript",
-    "unicorn",
-    "oxc",
-    "react",
-    "jsx-a11y",
-    "import",
-    "promise",
-    "node"
-  ],
+  "plugins": ["typescript", "unicorn", "oxc", "react", "jsx-a11y", "import", "promise", "node"],
   "categories": {
     "correctness": "error",
     "suspicious": "error"
@@ -20,6 +11,12 @@
     // The project uses React's automatic JSX runtime (react-jsx).
     "react/react-in-jsx-scope": "off"
   },
+  "options": {
+    "denyWarnings": true,
+    "reportUnusedDisableDirectives": "error",
+    "typeAware": true
+  },
+  "ignorePatterns": ["src/sst-env.d.ts"],
   "env": {
     "builtin": true
   }
