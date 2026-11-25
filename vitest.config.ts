@@ -5,6 +5,7 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: "jsdom",
+    pool: "vmThreads",
     include: ["tests/unit/**/*.test.{ts,tsx}"],
     setupFiles: ["tests/unit/setup.ts"],
     coverage: {
